@@ -19,7 +19,10 @@ public class MecanumDriveTrain extends OpMode {
     // RF stands for Right Front
     // LB stands for Left Back
 
-    boolean wasDown, wasUp;
+    // boolean wasDown, wasUp;
+    boolean flag_right_trigger = true;
+    boolean LinearSlideForwardTelemetry, LinearSlideReversedTelemetry = true;
+
 
     DcMotor RFMotor;
     DcMotor RBMotor;
@@ -34,6 +37,9 @@ public class MecanumDriveTrain extends OpMode {
     */
 
 
+    private Servo clawServo1;
+    private Servo clawServo2;
+
     @Override
     public void init() {
 
@@ -42,8 +48,9 @@ public class MecanumDriveTrain extends OpMode {
         LFMotor = hardwareMap.get(DcMotor.class, "LFMotor");
         LBMotor = hardwareMap.get(DcMotor.class, "LBMotor");
 
-        Servo clawServo1 = hardwareMap.get(Servo.class, "clawServo1");
-        Servo clawServo2 = hardwareMap.get(Servo.class, "clawServo2");
+        clawServo1 = hardwareMap.get(Servo.class, "clawServo1");
+        clawServo2 = hardwareMap.get(Servo.class, "clawServo2");
+
 
         /*
 
@@ -61,48 +68,53 @@ public class MecanumDriveTrain extends OpMode {
     @Override
     public void loop() {
 
-        double vertical = 0;
-        double horizontal = 0;
-        double pivot = 0;
 
-        vertical = -gamepad1.left_stick_y;
-        horizontal = gamepad1.left_stick_x;
-        pivot = gamepad1.right_stick_x;
+        double vertical = -gamepad1.left_stick_y;
+        double horizontal = gamepad1.left_stick_x * 1.1;
+        double pivot = gamepad1.right_stick_x;
 
-        RFMotor.setPower(pivot + (-vertical + horizontal));
-        RBMotor.setPower(pivot + (-vertical - horizontal));
-        LFMotor.setPower(pivot + (-vertical - horizontal));
-        LBMotor.setPower(pivot + (-vertical + horizontal));
+        float clawServoPosition = gamepad1.right_trigger;
 
-        float clawServoPower = gamepad1.right_trigger;
+        double denominator = Math.max(Math.abs(vertical) + Math.abs(horizontal) + Math.abs(pivot), 1);
+
+        RFMotor.setPower((pivot + (-vertical + horizontal)) / denominator);
+        RBMotor.setPower((pivot + (-vertical - horizontal)) / denominator);
+        LFMotor.setPower((pivot + (-vertical - horizontal)) / denominator);
+        LBMotor.setPower((pivot + (-vertical + horizontal)) / denominator);
+
+        // Assuming that both Claw Servo's are Standard Servo's
+
+        if (gamepad1.right_trigger >= 0.5) {
+
+            telemetry.addData("Claw", "Open");
+            clawServo1.setPosition(0.6);
+            // clawServo2.setPosition(0.6);
+
+        }
+
+        else {
+
+            telemetry.addData("Claw", "Close");
+            clawServo1.setPosition(0);
+            // clawServo2.setPosition(0);
+
+        }
 
 
 
         /*
 
         double linearSlidePower = 0.3;
-        double clawServoPower = 0.3;
-
-        float rightTriggerPressed = gamepad1.right_trigger;
-        float leftTriggerPressed = gamepad1.left_trigger;
-
-        if (rightTriggerPressed > 0.5) {
-            telemetry.addData("Right Trigger", "Pressed");
-        }
-
-        if (leftTriggerPressed > 0.5) {
-            telemetry.addData("Left Trigger", "Pressed");
-        }
 
 
         if (gamepad1.dpad_up) {
-            telemetry.addData("Left and Right Linear Slide", "Activated Forward");
+            telemetry.addData("Left and Right Linear Slide", "Activated (Forward)");
             leftLinearSlide.setPower(linearSlidePower);
             rightLinearSlide.setPower(linearSlidePower);
         }
 
         else if (gamepad1.dpad_down) {
-            telemetry.addData("Left and Right Linear Slide", "Activated Backward");
+            telemetry.addData("Left and Right Linear Slide", "Activated (Reverse)");
             leftLinearSlide.setPower(-linearSlidePower);
             rightLinearSlide.setPower(-linearSlidePower);
         }
