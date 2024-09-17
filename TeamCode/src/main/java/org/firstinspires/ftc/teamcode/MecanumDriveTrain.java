@@ -96,7 +96,8 @@ public class MecanumDriveTrain extends OpMode {
 
             telemetry.addData("Claw", "Close");
             clawServo1.setPosition(0);
-            // clawServo2.setPosition(0);
+            // clawServo2.setPosition(1);
+            // The second servo has to move in a opposite direction to the other servo
 
         }
 
