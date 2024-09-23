@@ -64,6 +64,7 @@ public class MecanumDriveTrain extends LinearOpMode {
                 telemetry.addData("Both Claws:", "Deactivated");
                 clawServo1.setPosition(0);
                 clawServo2.setPosition(0);
+                // Trust
             }
 
             // This button choice was made so that it is hard to hit on accident,
