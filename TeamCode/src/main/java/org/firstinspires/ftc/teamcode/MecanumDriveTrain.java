@@ -65,8 +65,8 @@ public class MecanumDriveTrain extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x;
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
 
@@ -94,7 +94,7 @@ public class MecanumDriveTrain extends LinearOpMode {
                 imu.resetYaw();
             }
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
