@@ -15,6 +15,16 @@ public class AutoCode extends LinearOpMode {
 
     // movement functions
     public void Forward(int power, int wait){
+        frontLeftMotor.setPower(20);
+        frontRightMotor.setPower(20);
+        backLeftMotor.setPower(20);
+        backRightMotor.setPower(20);
+        sleep(500);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+
 
     }
 
@@ -68,15 +78,7 @@ public class AutoCode extends LinearOpMode {
         telemetry.addData("running","True");
 
         // goes forward with 20% power for half a second
-        frontLeftMotor.setPower(20);
-        frontRightMotor.setPower(20);
-        backLeftMotor.setPower(20);
-        backRightMotor.setPower(20);
-        sleep(500);
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
+
 
     }
 }
