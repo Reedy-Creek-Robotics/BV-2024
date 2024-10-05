@@ -55,7 +55,9 @@ public class AutoCode extends LinearOpMode {
         imu.initialize(parameters);
 
         // movement functions
+        public void Forward(int power, int wait){
 
+        }
 
 
         waitForStart();
