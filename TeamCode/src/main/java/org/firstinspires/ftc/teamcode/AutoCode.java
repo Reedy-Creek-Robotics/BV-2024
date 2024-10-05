@@ -57,6 +57,7 @@ public class AutoCode extends LinearOpMode {
         // movement functions
 
 
+
         waitForStart();
         // for some reason does not add telemetry data idk why
         telemetry.addData("running","True");
