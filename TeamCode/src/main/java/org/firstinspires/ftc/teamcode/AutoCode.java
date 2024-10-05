@@ -13,34 +13,38 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous
 public class AutoCode extends LinearOpMode {
 
-    // movement functions
-    public void Forward(int power, int wait){
-        frontLeftMotor.setPower(20);
-        frontRightMotor.setPower(20);
-        backLeftMotor.setPower(20);
-        backRightMotor.setPower(20);
-        sleep(500);
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-
-
-    }
-
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Declare our motors
-        // Make sure your ID's match your configuration
 
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
 
+
         Servo clawServo1 = hardwareMap.get(Servo.class, "ClawServo1");
         Servo clawServo2 = hardwareMap.get(Servo.class, "ClawServo2");
+
+        class innerClass {
+            public void innerMethod(int power, int wait){
+                frontLeftMotor.setPower(20);
+                frontRightMotor.setPower(20);
+                backLeftMotor.setPower(20);
+                backRightMotor.setPower(20);
+                sleep(500);
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
+                backLeftMotor.setPower(0);
+                backRightMotor.setPower(0);
+            }
+        }
+
+        innerClass inner = new innerClass();
+
+        inner.innerMethod(1, 3);
+
+
 
         clawServo1.setPosition(0.40);
         clawServo2.setPosition(0.65);
