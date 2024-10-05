@@ -13,6 +13,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous
 public class AutoCode extends LinearOpMode {
 
+    // movement functions
+    public void Forward(int power, int wait){
+
+    }
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -54,10 +60,7 @@ public class AutoCode extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        // movement functions
-        public void Forward(int power, int wait){
 
-        }
 
 
         waitForStart();
