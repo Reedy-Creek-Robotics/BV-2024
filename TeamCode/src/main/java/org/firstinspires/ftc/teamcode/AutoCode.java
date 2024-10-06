@@ -89,6 +89,14 @@ public class AutoCode extends LinearOpMode {
 
         Movement inner = new Movement();
 
+        // Retrieve the IMU from the hardware map
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
 
 
 
@@ -110,12 +118,12 @@ public class AutoCode extends LinearOpMode {
         inner.Forward(0.3, 2000);
         // wait for motors to stop
         sleep(500);
-        inner.TankTurn(0.3,1000);
+        inner.TankTurn(0.3,1260);
         // wait for motors to stop
         sleep(500);
         inner.Strafe(0.3,2000);
         sleep(500);
-        inner.TankTurn(-0.3,1000);
+        inner.TankTurn(-0.3,1260);
 
 
 
