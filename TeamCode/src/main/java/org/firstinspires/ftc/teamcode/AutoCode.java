@@ -58,7 +58,7 @@ public class AutoCode extends LinearOpMode {
             }
 
 
-            // takes 2 inputs, the turning speed and waiting time to stop
+            // takes 2 inputs, the turning speed and waiting time to stop, positive number means left turn and negative is right turn
             public void TankTurn(double TurnVal, int wait){
                 frontLeftMotor.setPower(-TurnVal);
                 frontRightMotor.setPower(TurnVal);
@@ -70,6 +70,21 @@ public class AutoCode extends LinearOpMode {
                 backLeftMotor.setPower(0);
                 backRightMotor.setPower(0);
             }
+
+            // takes 2 inputs, the movement speed and waiting time to stop, positive number means stafe left, negative number means stafe right
+            public void Strafe(double Speed, int wait){
+                frontLeftMotor.setPower(Speed);
+                frontRightMotor.setPower(-Speed);
+                backLeftMotor.setPower(-Speed);
+                backRightMotor.setPower(Speed);
+                sleep(wait);
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
+                backLeftMotor.setPower(0);
+                backRightMotor.setPower(0);
+            }
+
+
         }
 
         Movement inner = new Movement();
@@ -89,10 +104,18 @@ public class AutoCode extends LinearOpMode {
          calls a inner class which is movement and gets the functions gives inputs and runs,
          this is where our main auto code will go
          */
-        inner.Forward(0.6, 2000);
+
+        // should just go forward turn left, strafe left and turn again, need to perfect turn vals to make sure it turns good
+
+        inner.Forward(0.3, 2000);
         // wait for motors to stop
-        sleep(1000);
+        sleep(500);
         inner.TankTurn(0.3,1000);
+        // wait for motors to stop
+        sleep(500);
+        inner.Strafe(0.3,2000);
+        sleep(500);
+        inner.TankTurn(-0.3,1000);
 
 
 
