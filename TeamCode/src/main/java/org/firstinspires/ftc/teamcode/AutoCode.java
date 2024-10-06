@@ -83,6 +83,8 @@ public class AutoCode extends LinearOpMode {
          this is where our main auto code will go
          */
         inner.Forward(0.6, 3000);
+        // wait for motors to stop
+        sleep(500);
         inner.TankTurn(0.5,500);
 
 
