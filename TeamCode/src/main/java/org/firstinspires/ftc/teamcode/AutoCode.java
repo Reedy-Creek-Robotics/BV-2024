@@ -93,8 +93,8 @@ public class AutoCode extends LinearOpMode {
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
@@ -106,6 +106,7 @@ public class AutoCode extends LinearOpMode {
 
 
         telemetry.addData("running","True");
+        telemetry.addData("Gyro",imu.getRobotYawPitchRollAngles());
         telemetry.update();
 
         /*
@@ -124,6 +125,8 @@ public class AutoCode extends LinearOpMode {
         inner.Strafe(0.3,2000);
         sleep(500);
         inner.TankTurn(-0.3,1260);
+        telemetry.addData("Gyro",imu.getRobotYawPitchRollAngles());
+        telemetry.update();
 
 
 
