@@ -50,18 +50,25 @@ public class AutoCode extends LinearOpMode {
                 backLeftMotor.setPower(power);
                 backRightMotor.setPower(power);
                 sleep(wait);
-                stop();
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
+                backLeftMotor.setPower(0);
+                backRightMotor.setPower(0);
+
             }
 
 
             // takes 2 inputs, the turning speed and waiting time to stop
             public void TankTurn(double TurnVal, int wait){
-                frontLeftMotor.setPower(TurnVal);
+                frontLeftMotor.setPower(-TurnVal);
                 frontRightMotor.setPower(TurnVal);
-                backLeftMotor.setPower(TurnVal);
+                backLeftMotor.setPower(-TurnVal);
                 backRightMotor.setPower(TurnVal);
                 sleep(wait);
-                stop();
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
+                backLeftMotor.setPower(0);
+                backRightMotor.setPower(0);
             }
         }
 
@@ -84,8 +91,8 @@ public class AutoCode extends LinearOpMode {
          */
         inner.Forward(0.6, 3000);
         // wait for motors to stop
-        sleep(500);
-        inner.TankTurn(0.5,500);
+        sleep(1000);
+        inner.TankTurn(0.3,1000);
 
 
 
