@@ -89,7 +89,7 @@ public class AutoCode extends LinearOpMode {
          calls a inner class which is movement and gets the functions gives inputs and runs,
          this is where our main auto code will go
          */
-        inner.Forward(0.6, 3000);
+        inner.Forward(0.6, 2000);
         // wait for motors to stop
         sleep(1000);
         inner.TankTurn(0.3,1000);
