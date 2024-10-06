@@ -22,17 +22,19 @@ public class AutoCode extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
 
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Servo clawServo1 = hardwareMap.get(Servo.class, "ClawServo1");
         Servo clawServo2 = hardwareMap.get(Servo.class, "ClawServo2");
 
         class innerClass {
-            public void innerMethod(int power, int wait){
-                frontLeftMotor.setPower(20);
-                frontRightMotor.setPower(20);
-                backLeftMotor.setPower(20);
-                backRightMotor.setPower(20);
-                sleep(500);
+            public void innerMethod(double power, int wait){
+                frontLeftMotor.setPower(power);
+                frontRightMotor.setPower(power);
+                backLeftMotor.setPower(power);
+                backRightMotor.setPower(power);
+                sleep(wait);
                 frontLeftMotor.setPower(0);
                 frontRightMotor.setPower(0);
                 backLeftMotor.setPower(0);
@@ -42,37 +44,6 @@ public class AutoCode extends LinearOpMode {
 
         innerClass inner = new innerClass();
 
-        inner.innerMethod(1, 3);
-
-
-
-        clawServo1.setPosition(0.40);
-        clawServo2.setPosition(0.65);
-
-        double position = 0;
-
-        ElapsedTime timeSinceRightBumperPressed = new ElapsedTime();
-
-        boolean claw_state = false; // false as open, true as closed
-
-        //double claw1_position = 0.5;
-        //double claw2_position = 0.5;
-
-        // Reverse the right side motors. This may be wrong for your setup.
-        // If your robot moves backwards when commanded to go forwards,
-        // reverse the left side instead.
-        // See the note about this earlier on this page.
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Retrieve the IMU from the hardware map
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
 
 
 
@@ -80,6 +51,9 @@ public class AutoCode extends LinearOpMode {
         waitForStart();
         // for some reason does not add telemetry data idk why
         telemetry.addData("running","True");
+        telemetry.update();
+        inner.innerMethod(0.3, 3000);
+
 
         // goes forward with 20% power for half a second
 
