@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import java.security.cert.TrustAnchor;
+
 @Autonomous
 public class AutoCode extends LinearOpMode {
 
@@ -70,6 +72,34 @@ public class AutoCode extends LinearOpMode {
                 sleep(wait);
                 Stop();
             }
+
+            // Takes 2 inputs, the turning speed and waiting time to stop, positive number means left turn and negative is right turn
+            public void GyroTrun(double TurnVal, int speed) {
+                double Turn = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+TurnVal;
+                frontLeftMotor.setPower(-speed);
+                frontRightMotor.setPower(speed);
+                backLeftMotor.setPower(-speed);
+                backRightMotor.setPower(speed);
+                int turn = 1;
+                while(turn == 1){
+                    if (TurnVal > 0){
+                        if (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) >= Turn){
+                            turn = 0;
+                            Stop();
+                        }
+
+                    }
+                    if (TurnVal < 0){
+                        if (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) <= Turn){
+                            turn = 0;
+                            Stop();
+                        }
+
+                    }
+                }
+                Stop();
+            }
+
 
             // Takes 2 inputs, the movement speed and waiting time to stop, positive number means strafe left, negative number means strafe right
             public void Strafe(double Speed, int wait) {
