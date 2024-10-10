@@ -73,8 +73,9 @@ public class AutoCode extends LinearOpMode {
                 Stop();
             }
 
-            // Takes 2 inputs, the turning speed and waiting time to stop, positive number means left turn and negative is right turn
-            public void GyroTrun(double TurnVal, int speed) {
+            // Takes 2 inputs, the degrees to turn and speed to turn at, uses the IMU to make a tank turn more accuratly,
+            // by running the motor until the angle is met
+            public void GyroTurn(double TurnVal, int speed) {
                 double Turn = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+TurnVal;
                 frontLeftMotor.setPower(-speed);
                 frontRightMotor.setPower(speed);
