@@ -127,7 +127,7 @@ public class AutoCode extends LinearOpMode {
                 double drift = finalYaw - initialYaw;
 
                 // If there's a significant drift, correct it with a small turn
-                if (Math.abs(drift) > 0) {
+                /*if (Math.abs(drift) > 0) {
                     double correctionSpeed = 0.1; // Adjust this value as necessary
                     if (drift > 0.5) {
                         // Drifted right, so turn left slightly
@@ -136,7 +136,7 @@ public class AutoCode extends LinearOpMode {
                         // Drifted left, so turn right slightly
                         TankTurn(correctionSpeed, (int) Math.abs(drift * 10)); // Adjust timing
                     }
-                }
+                }*/
             }
         }
 
