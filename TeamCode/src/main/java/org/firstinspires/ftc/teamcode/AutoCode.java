@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
-public class LinearSlides extends LinearOpMode {
+public class AutoCode extends LinearOpMode {
 
     private DcMotor LeftLinearSlide;
     private final int POSITION_LOW = 1600;
