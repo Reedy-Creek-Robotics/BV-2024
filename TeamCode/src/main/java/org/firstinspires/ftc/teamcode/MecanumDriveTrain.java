@@ -33,8 +33,8 @@ public class MecanumDriveTrain extends LinearOpMode {
     private DcMotor armMotor;
 
 
-    private final int POSITION_LOW = 700;
-    private final int POSITION_HIGH = 1500;
+    private final int POSITION_LOW = 2000;
+    private final int POSITION_HIGH = 3800;
     private final int POSITION_BASE = 0;
 
 
@@ -87,8 +87,8 @@ public class MecanumDriveTrain extends LinearOpMode {
 
 
 
-        clawServo1.setPosition(0.40);
-        clawServo2.setPosition(0.65);
+        clawServo1.setPosition(0.05);
+        clawServo2.setPosition(1);
 
 
 
@@ -149,13 +149,15 @@ public class MecanumDriveTrain extends LinearOpMode {
 
 
 
+
+
         while (opModeIsActive()) {
 
 
 
 
-            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x;
+            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
 
@@ -169,21 +171,24 @@ public class MecanumDriveTrain extends LinearOpMode {
 
 
             if (gamepad1.right_trigger > 0.5) {
-                position += 10;
-
-
-            }
-
-
-            else if (gamepad1.left_trigger > 0.5) {
                 position -= 10;
 
 
             }
 
 
+            else if (gamepad1.left_trigger > 0.5) {
+                position += 10;
+
+
+            }
+
+
+
+
             armMotor.setTargetPosition(position);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotor.setPower(0.375);
 
 
 
@@ -254,12 +259,12 @@ public class MecanumDriveTrain extends LinearOpMode {
 
 
             if(claw_state) {
-                clawServo1.setPosition(0.05);
-                clawServo2.setPosition(1);
-            }
-            else {
                 clawServo1.setPosition(0.40);
                 clawServo2.setPosition(0.65);
+            }
+            else {
+                clawServo1.setPosition(0.05);
+                clawServo2.setPosition(1);
             }
 
 
@@ -305,10 +310,10 @@ public class MecanumDriveTrain extends LinearOpMode {
 
 
 
-            frontLeftMotor.setPower(frontLeftPower);
-            backLeftMotor.setPower(backLeftPower);
-            frontRightMotor.setPower(frontRightPower);
-            backRightMotor.setPower(backRightPower);
+            frontLeftMotor.setPower(frontLeftPower*0.6);
+            backLeftMotor.setPower(backLeftPower*0.6);
+            frontRightMotor.setPower(frontRightPower*0.6);
+            backRightMotor.setPower(backRightPower*0.6);
 
 
 
