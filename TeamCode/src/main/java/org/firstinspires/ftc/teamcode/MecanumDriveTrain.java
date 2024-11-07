@@ -46,7 +46,7 @@ public class MecanumDriveTrain extends LinearOpMode {
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         ElapsedTime timeSinceButtonPressed = new ElapsedTime();
-        double LinearPower = 0.5;
+        double LinearPower = 0.6;
         int linearState = 0;
 
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
@@ -87,8 +87,8 @@ public class MecanumDriveTrain extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x;
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
 
@@ -102,7 +102,8 @@ public class MecanumDriveTrain extends LinearOpMode {
                 telemetry.update();
                 if (timeSinceAButtonPressed.milliseconds() > 500) {
                     timeSinceAButtonPressed.reset();
-                    position = -600;
+                    position = -660;
+                    armMotor.setPower(0.1);
                 }
             }
 
@@ -111,25 +112,32 @@ public class MecanumDriveTrain extends LinearOpMode {
                 telemetry.update();
                 if (timeSinceBButtonPressed.milliseconds() > 500) {
                     timeSinceBButtonPressed.reset();
-                    position = -50;
+                    position = -350;
+                    armMotor.setPower(0.1);
                 }
             }
 
             else if (gamepad1.right_trigger > 0.5) {
-                position += 10;
+                position -= 8;
+                armMotor.setPower(0.3);
 
             }
 
             else if (gamepad1.left_trigger > 0.5) {
-                position -= 10;
+                position += 8;
+                armMotor.setPower(0.3);
 
+            }
+
+            if (position > 0) {
+                position = 0;
             }
 
             armMotor.setTargetPosition(position);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotor.setPower(0.375);
 
-            if (gamepad1.options) {
+
 
                 if (gamepad1.dpad_up && timeSinceButtonPressed.milliseconds() > 1000) {
                     linearState = Math.min(linearState + 1, 2); // Move up in states
@@ -175,30 +183,9 @@ public class MecanumDriveTrain extends LinearOpMode {
                     LeftLinearSlide.setPower(0);
                     RightLinearSlide.setPower(0); // Stop the motors when done
                 }
-            }
 
-            else {
 
-                if (gamepad1.dpad_up && timeSinceButtonPressed.milliseconds() > 600) {
-                    positionLinearSlides += 200;
-                    timeSinceButtonPressed.reset();
-                }
 
-                if (gamepad1.dpad_down && timeSinceButtonPressed.milliseconds() > 600) {
-                    positionLinearSlides -= 200;
-                    timeSinceButtonPressed.reset();
-                }
-
-                LeftLinearSlide.setTargetPosition(-positionLinearSlides);
-                RightLinearSlide.setTargetPosition(positionLinearSlides);
-
-                LeftLinearSlide.setPower(0.1);
-                RightLinearSlide.setPower(0.1);
-
-                LeftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            }
 
 
             if(gamepad1.right_bumper) {
@@ -209,14 +196,6 @@ public class MecanumDriveTrain extends LinearOpMode {
 
             }
 
-            if(claw_state) {
-                clawServo1.setPosition(0.40);
-                clawServo2.setPosition(0.65);
-            }
-            else {
-                clawServo1.setPosition(0.05);
-                clawServo2.setPosition(1);
-            }
 
             if (gamepad1.options) {
                 imu.resetYaw();
@@ -243,7 +222,21 @@ public class MecanumDriveTrain extends LinearOpMode {
             frontRightMotor.setPower(frontRightPower*0.8);
             backRightMotor.setPower(backRightPower*0.8);
 
-        }
+
+            if(claw_state) {
+                telemetry.addData("claw", "Claw");
+                telemetry.update();
+                clawServo1.setPosition(0.40);
+                clawServo2.setPosition(0.65);
+            }
+            else {
+                telemetry.addData("TRUST", "CLAW");
+                telemetry.update();
+                clawServo1.setPosition(0.05);
+                clawServo2.setPosition(1);
+            }
+
+        } // end while loop
     }
 }
 // Trust omg ok trust
