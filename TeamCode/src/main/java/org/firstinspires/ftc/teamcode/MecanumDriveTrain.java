@@ -20,10 +20,8 @@ public class MecanumDriveTrain extends LinearOpMode {
 
     private DcMotor LeftLinearSlide;
     private DcMotor RightLinearSlide;
-    private DcMotor armMotor;
 
-    private final int POSITION_LOW = 1600;
-    private final int POSITION_HIGH = 2800;
+    private final int POSITION_HIGH = 3050;
     private final int POSITION_BASE = 0;
 
     @Override
@@ -31,19 +29,12 @@ public class MecanumDriveTrain extends LinearOpMode {
         // Declare our motors
         // Make sure your ID's match your configuration
 
-        double armPower = 0.4;
-        int positionLinearSlides = 0;
-
-        armMotor = hardwareMap.dcMotor.get("armMotor");
         LeftLinearSlide = hardwareMap.dcMotor.get("LeftLinear");
         RightLinearSlide = hardwareMap.dcMotor.get("RightLinear");
-
-        int position = armMotor.getCurrentPosition();
 
         // Reset encoders
         LeftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         ElapsedTime timeSinceButtonPressed = new ElapsedTime();
         double LinearPower = 0.6;
@@ -58,14 +49,23 @@ public class MecanumDriveTrain extends LinearOpMode {
         Servo clawServo1 = hardwareMap.get(Servo.class, "ClawServo1");
         Servo clawServo2 = hardwareMap.get(Servo.class, "ClawServo2");
 
+        Servo clawArm1 = hardwareMap.get(Servo.class, "ArmServo1");
+        Servo clawArm2 = hardwareMap.get(Servo.class, "ArmServo2");
+
+        Servo bucketArmContraption = hardwareMap.get(Servo.class, "BucketServo");
+
+
+
         clawServo1.setPosition(0.05);
         clawServo2.setPosition(1);
 
         ElapsedTime timeSinceRightBumperPressed = new ElapsedTime();
+        ElapsedTime timeSinceLeftBumperPressed = new ElapsedTime();
         ElapsedTime timeSinceAButtonPressed = new ElapsedTime();
         ElapsedTime timeSinceBButtonPressed = new ElapsedTime();
 
-        boolean claw_state = false; // false as open, true as closed
+        boolean claw_state = false;
+        boolean arm_state = false;// false as open, true as closed//
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -78,10 +78,15 @@ public class MecanumDriveTrain extends LinearOpMode {
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
+
+        clawArm1.setPosition(0);
+        clawArm2.setPosition(0);
+
+        bucketArmContraption.setPosition(0);
 
         waitForStart();
 
@@ -94,48 +99,10 @@ public class MecanumDriveTrain extends LinearOpMode {
 
             telemetry.addData("Left Motor Position", LeftLinearSlide.getCurrentPosition());
             telemetry.addData("Right Motor Position", RightLinearSlide.getCurrentPosition());
-            telemetry.addData("Arm Motor Position", armMotor.getCurrentPosition());
+            telemetry.addData("Yaw angle", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
             telemetry.update();
 
-            if (gamepad1.a) {
-                telemetry.addData("A Button Do Be Pressing Hard . . . :)", "");
-                telemetry.update();
-                if (timeSinceAButtonPressed.milliseconds() > 500) {
-                    timeSinceAButtonPressed.reset();
-                    position = -660;
-                    armMotor.setPower(0.1);
-                }
-            }
 
-            else if (gamepad1.b) {
-                telemetry.addData("B Button Do Be Pressing Hard . . . :|", "");
-                telemetry.update();
-                if (timeSinceBButtonPressed.milliseconds() > 500) {
-                    timeSinceBButtonPressed.reset();
-                    position = -350;
-                    armMotor.setPower(0.1);
-                }
-            }
-
-            else if (gamepad1.right_trigger > 0.5) {
-                position -= 8;
-                armMotor.setPower(0.3);
-
-            }
-
-            else if (gamepad1.left_trigger > 0.5) {
-                position += 8;
-                armMotor.setPower(0.3);
-
-            }
-
-            if (position > 0) {
-                position = 0;
-            }
-
-            armMotor.setTargetPosition(position);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor.setPower(0.375);
 
 
 
@@ -160,11 +127,6 @@ public class MecanumDriveTrain extends LinearOpMode {
                         break;
                     case 1:
                         telemetry.addData("Linear Slide Height:", "Low Basket Level (2400)");
-                        LeftLinearSlide.setTargetPosition(-POSITION_LOW);
-                        RightLinearSlide.setTargetPosition(POSITION_LOW);
-                        break;
-                    case 2:
-                        telemetry.addData("Linear Slide Height:", "High Basket Level (5030)");
                         LeftLinearSlide.setTargetPosition(-POSITION_HIGH);
                         RightLinearSlide.setTargetPosition(POSITION_HIGH);
                         break;
@@ -196,6 +158,13 @@ public class MecanumDriveTrain extends LinearOpMode {
 
             }
 
+            if (gamepad1.left_bumper) {
+                if (timeSinceLeftBumperPressed.milliseconds() > 500) {
+                    timeSinceLeftBumperPressed.reset();
+                    arm_state = !arm_state;
+                }
+            }
+
 
             if (gamepad1.options) {
                 imu.resetYaw();
@@ -223,18 +192,38 @@ public class MecanumDriveTrain extends LinearOpMode {
             backRightMotor.setPower(backRightPower*0.8);
 
 
+
             if(claw_state) {
-                telemetry.addData("claw", "Claw");
-                telemetry.update();
-                clawServo1.setPosition(0.40);
-                clawServo2.setPosition(0.65);
-            }
-            else {
-                telemetry.addData("TRUST", "CLAW");
-                telemetry.update();
-                clawServo1.setPosition(0.05);
+
+                clawServo1.setPosition(0);
                 clawServo2.setPosition(1);
             }
+            else {
+
+                clawServo1.setPosition(1);
+                clawServo2.setPosition(0);
+            }
+
+            if (arm_state) {
+                clawArm1.setPosition(1);
+                clawArm2.setPosition(-1);
+            }
+
+            else {
+                clawArm1.setPosition(0);
+                clawArm2.setPosition(0);
+            }
+
+            if (gamepad1.b) {
+                if (timeSinceAButtonPressed.milliseconds() > 500) {
+                    bucketArmContraption.setPosition(-1);
+                    sleep(1000);
+                    bucketArmContraption.setPosition(0);
+                    linearState = 0;
+                }
+            }
+
+
 
         } // end while loop
     }

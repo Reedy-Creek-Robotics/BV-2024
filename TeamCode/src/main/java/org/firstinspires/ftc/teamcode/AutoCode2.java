@@ -181,7 +181,7 @@ public class AutoCode2 extends LinearOpMode {
 
         // Autonomous routine with drift correction
         // S1
-        inner.Strafe(-0.4, 3000);
+        inner.Strafe(0.4, 3000);
 
 
         // S3

@@ -148,7 +148,7 @@ public class AutoCode1 extends LinearOpMode {
 
 
                 // If there's a significant drift, correct it with a small turn
-               /*if (Math.abs(drift) > 0) {
+               if (Math.abs(drift) > 0) {
                    double correctionSpeed = 0.1; // Adjust this value as necessary
                    if (drift > 0.5) {
                        // Drifted right, so turn left slightly
@@ -157,7 +157,7 @@ public class AutoCode1 extends LinearOpMode {
                        // Drifted left, so turn right slightly
                        TankTurn(correctionSpeed, (int) Math.abs(drift * 10)); // Adjust timing
                    }
-               }*/
+               }
             }
         }
 
@@ -174,8 +174,8 @@ public class AutoCode1 extends LinearOpMode {
 
 
         // Autonomous routine with drift correction
-        inner.Forward(-0.4,2500);
-        inner.Strafe(-0.4,1750);
+        inner.Forward(0.4,2800);
+        inner.Strafe(0.4,1750);
 
 
         // S3
