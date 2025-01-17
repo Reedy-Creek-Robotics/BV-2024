@@ -177,6 +177,49 @@ public class SampleAutoCode extends LinearOpMode {
         LeftLinearSlide.setTargetPosition(POSITION_BASE);
         RightLinearSlide.setTargetPosition(POSITION_BASE);
 
+        movement.setup();
+//1st sample
+        movement.forward();
+        movement.strafeLeft();
+        LeftLinearSlide.setTargetPosition(POSITION_HIGH);
+        RightLinearSlide.setTargetPosition(POSITION_HIGH);
+        bucket.setPosition();
+        bucket.setPosition();
+        LeftLinearSlide.setTargetPosition(POSITION_BASE);
+        RightLinearSlide.setTargetPosition(POSITION_BASE);
+//2nd sample
+movement.forward();
+//pickup motion
+clawArm1.setPosition();
+clawArm2.setPosition();
+clawServo1.setPosition();
+clawServo2.setPosition();
+bucket.setPosition();
+clawArm1.setPosition();
+clawArm2.setPosition();
+clawServo1.setPosition();
+clawServo2.setPosition();
+movement.backward();
+LeftLinearSlide.setTargetPosition(POSITION_HIGH);
+RightLinearSlide.setTargetPosition(POSITION_HIGH);
+bucket.setPosition();
+LeftLinearSlide.setTargetPosition(POSITION_BASE);
+RightLinearSlide.setTargetPosition(POSITION_BASE);
+//3rd sample
+movement.forward();
+movement.strafeLeft();
+        clawArm1.setPosition();
+        clawArm2.setPosition();
+        clawServo1.setPosition();
+        clawServo2.setPosition();
+        bucket.setPosition();
+        clawArm1.setPosition();
+        clawArm2.setPosition();
+        clawServo1.setPosition();
+        clawServo2.setPosition();
+
+
+
 
 
     }
