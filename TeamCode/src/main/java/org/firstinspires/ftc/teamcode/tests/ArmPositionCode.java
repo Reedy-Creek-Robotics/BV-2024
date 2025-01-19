@@ -15,10 +15,8 @@ public class ArmPositionCode extends LinearOpMode {
         Servo clawArm2 = hardwareMap.get(Servo.class, "ArmServo2");
 
         ElapsedTime timeSinceLeftBumperPressed = new ElapsedTime();
-        boolean arm_state = false;
+        boolean arm_state = true;
 
-        clawArm1.setPosition(0);// false as open, true as closed//
-        clawArm2.setPosition(0);
 
         waitForStart();
 
@@ -34,12 +32,12 @@ public class ArmPositionCode extends LinearOpMode {
 
 
             if (arm_state) {
-                clawArm1.setPosition(1);
-                clawArm2.setPosition(-1);
+                clawArm1.setPosition(0.5);
+                clawArm2.setPosition(0.5);
             }
 
             else {
-                clawArm1.setPosition(0);
+                clawArm1.setPosition(1);
                 clawArm2.setPosition(0);
             }
 

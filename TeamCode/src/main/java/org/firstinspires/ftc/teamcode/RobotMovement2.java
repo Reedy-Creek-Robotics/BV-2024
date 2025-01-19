@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class RobotMovement {
+public class RobotMovement2 {
 
     private final DcMotor frontLeftMotor;
     private final DcMotor backLeftMotor;
@@ -22,9 +22,9 @@ public class RobotMovement {
     private final IMU imu;
     Servo activeTake;
 
-    private static final double DRIVE_POWER = 0.7;
+    private static final double DRIVE_POWER = 0.6;
 
-    public RobotMovement(DcMotor Leftlin, DcMotor Rightlin, DcMotor frontLeft, DcMotor backLeft, DcMotor frontRight, DcMotor backRight, IMU imu, LinearOpMode opMode) {
+    public RobotMovement2(DcMotor Leftlin, DcMotor Rightlin, DcMotor frontLeft, DcMotor backLeft, DcMotor frontRight, DcMotor backRight, IMU imu, LinearOpMode opMode) {
         this.frontLeftMotor = frontLeft;
         this.backLeftMotor = backLeft;
         this.frontRightMotor = frontRight;

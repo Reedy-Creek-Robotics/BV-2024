@@ -16,13 +16,17 @@ import java.util.ArrayList;
 
 
 @TeleOp
-public class MecanumDriveTrain extends LinearOpMode {
+public class EntireRobot extends LinearOpMode {
 
     private DcMotor LeftLinearSlide;
     private DcMotor RightLinearSlide;
 
     private final int POSITION_HIGH = 3000;
+    private final int POSITION_SPECIMEN_HIGH = 2450;
+    private final int POSITION_SPECIMEN_LOW = 1350;
     private final int POSITION_BASE = 0;
+    private double state_1_1 = 0.5;
+    private double state_1_2 = 0.5;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,10 +58,10 @@ public class MecanumDriveTrain extends LinearOpMode {
         Servo clawArm1 = hardwareMap.get(Servo.class, "ArmServo1");
         Servo clawArm2 = hardwareMap.get(Servo.class, "ArmServo2");
 
+        Servo bucket = hardwareMap.get(Servo.class, "Bucket");
 
-
-        clawServo1.setPosition(0.05);
-        clawServo2.setPosition(1);
+        clawServo1.setPosition(0.25);
+        clawServo2.setPosition(0.75);
 
         ElapsedTime timeSinceRightBumperPressed = new ElapsedTime();
         ElapsedTime timeSinceLeftBumperPressed = new ElapsedTime();
@@ -85,9 +89,6 @@ public class MecanumDriveTrain extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        clawArm1.setPosition(0);
-        clawArm2.setPosition(0);
-
 
         waitForStart();
 
@@ -97,59 +98,71 @@ public class MecanumDriveTrain extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
-
             telemetry.addData("Left Motor Position", LeftLinearSlide.getCurrentPosition());
             telemetry.addData("Right Motor Position", RightLinearSlide.getCurrentPosition());
             telemetry.addData("Yaw angle", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+            telemetry.addData("Position", bucket.getPosition());
             telemetry.update();
 
+            if (gamepad1.dpad_up && timeSinceButtonPressed.milliseconds() > 1000) {
+                linearState = 1; // Move up in states
+                timeSinceButtonPressed.reset();
+            }
 
+            if (gamepad1.dpad_down && timeSinceButtonPressed.milliseconds() > 1000) {
+                linearState = 0; // Move down in states
+                timeSinceButtonPressed.reset();
+            }
 
+            if (gamepad1.dpad_right && timeSinceButtonPressed.milliseconds() > 1000) {
+                linearState = 2;
+                timeSinceButtonPressed.reset();
+            }
 
+            if (gamepad1.dpad_left && timeSinceButtonPressed.milliseconds() > 1000) {
+                linearState = 3;
+                timeSinceButtonPressed.reset();
+            }
 
-                if (gamepad1.dpad_up && timeSinceButtonPressed.milliseconds() > 1000) {
-                    linearState = Math.min(linearState + 1, 2); // Move up in states
-                    timeSinceButtonPressed.reset();
-                }
+            // Set target positions based on the current state
+            switch (linearState) {
+                // Left is port 1
+                // Right is port 0
+                case 0:
+                    telemetry.addData("Linear Slide Height:", "Base Level (0)");
+                    LeftLinearSlide.setTargetPosition(POSITION_BASE);
+                    RightLinearSlide.setTargetPosition(-POSITION_BASE);
+                    break;
+                case 1:
+                    telemetry.addData("Linear Slide Height:", "High Basket");
+                    LeftLinearSlide.setTargetPosition(POSITION_HIGH);
+                    RightLinearSlide.setTargetPosition(-POSITION_HIGH);
+                    break;
+                case 2:
+                    telemetry.addData("Linear Slide Height:", "High Specimen Level");
+                    LeftLinearSlide.setTargetPosition(POSITION_SPECIMEN_HIGH);
+                    RightLinearSlide.setTargetPosition(-POSITION_SPECIMEN_HIGH);
+                    break;
+                case 3:
+                    telemetry.addData("Linear Slide Height:", "Low Specimen Level");
+                    LeftLinearSlide.setTargetPosition(POSITION_SPECIMEN_LOW);
+                    RightLinearSlide.setTargetPosition(-POSITION_SPECIMEN_LOW);
+                    break;
+            }
 
-                if (gamepad1.dpad_down && timeSinceButtonPressed.milliseconds() > 1000) {
-                    linearState = Math.max(linearState - 1, 0); // Move down in states
-                    timeSinceButtonPressed.reset();
-                }
+            // Set motor mode to RUN_TO_POSITION
+            LeftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            RightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                // Set target positions based on the current state
-                switch (linearState) {
-                    // Left is port 1
-                    // Right is port 0
-                    case 0:
-                        telemetry.addData("Linear Slide Height:", "Base Level (0)");
-                        LeftLinearSlide.setTargetPosition(POSITION_BASE);
-                        RightLinearSlide.setTargetPosition(-POSITION_BASE);
-                        break;
-                    case 1:
-                        telemetry.addData("Linear Slide Height:", "Low Basket Level (2400)");
-                        LeftLinearSlide.setTargetPosition(POSITION_HIGH);
-                        RightLinearSlide.setTargetPosition(-POSITION_HIGH);
-                        break;
-                }
+            // Set power to move to the target position
+            LeftLinearSlide.setPower(LinearPower);
+            RightLinearSlide.setPower(LinearPower);
 
-                // Set motor mode to RUN_TO_POSITION
-                LeftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                // Set power to move to the target position
-                LeftLinearSlide.setPower(LinearPower);
-                RightLinearSlide.setPower(LinearPower);
-
-                // When both motors reach their target positions, stop them
-                if (!LeftLinearSlide.isBusy() && !RightLinearSlide.isBusy()) {
-                    LeftLinearSlide.setPower(0);
-                    RightLinearSlide.setPower(0); // Stop the motors when done
-                }
-
-
-
-
+            // When both motors reach their target positions, stop them
+            if (!LeftLinearSlide.isBusy() && !RightLinearSlide.isBusy()) {
+                LeftLinearSlide.setPower(0);
+                RightLinearSlide.setPower(0); // Stop the motors when done
+            }
 
             if(gamepad1.right_bumper) {
                 if(timeSinceRightBumperPressed.milliseconds() > 500) {
@@ -166,12 +179,38 @@ public class MecanumDriveTrain extends LinearOpMode {
                 }
             }
 
+            if (gamepad1.left_trigger > 0.5) {
+                state_1_1 = Math.min(state_1_1 + 0.01, 1.0); // Ensure within bounds
+                state_1_2 = Math.max(state_1_2 - 0.01, 0.0); // Ensure within bounds
+                clawArm1.setPosition(state_1_1);
+                clawArm2.setPosition(state_1_2);
+            }
+
+            if (gamepad1.right_trigger > 0.5) {
+                state_1_1 = Math.max(state_1_1 - 0.01, 0.0); // Ensure within bounds
+                state_1_2 = Math.min(state_1_2 + 0.01, 1.0); // Ensure within bounds
+                clawArm1.setPosition(state_1_1);
+                clawArm2.setPosition(state_1_2);
+            }
+
             if (gamepad1.left_bumper) {
                 if (timeSinceLeftBumperPressed.milliseconds() > 500) {
                     timeSinceLeftBumperPressed.reset();
                     arm_state = !arm_state;
+                    if (arm_state) {
+                        // Close position
+                        state_1_1 = 0.5;
+                        state_1_2 = 0.5;
+                    } else {
+                        // Open position
+                        state_1_1 = 0.04;
+                        state_1_2 = 0.96;
+                    }
                 }
             }
+
+            clawArm1.setPosition(state_1_1);
+            clawArm2.setPosition(state_1_2);
 
 
             if (gamepad1.options) {
@@ -203,19 +242,19 @@ public class MecanumDriveTrain extends LinearOpMode {
 
             if(claw_state) {
 
-                clawServo1.setPosition(0);
-                clawServo2.setPosition(1);
+                clawServo1.setPosition(0.6);
+                clawServo2.setPosition(0.4);
             }
             else {
 
-                clawServo1.setPosition(1);
-                clawServo2.setPosition(0);
+                clawServo1.setPosition(0.25);
+                clawServo2.setPosition(0.75);
             }
 
             if (spec_state) {
 
-                specServo1.setPosition(0.2);
-                specServo2.setPosition(0.8);
+                specServo1.setPosition(1);
+                specServo2.setPosition(0);
 
             }
 
@@ -224,16 +263,6 @@ public class MecanumDriveTrain extends LinearOpMode {
                 specServo1.setPosition(0.5);
                 specServo2.setPosition(0.5);
 
-            }
-
-            if (arm_state) {
-                clawArm1.setPosition(0.5);
-                clawArm2.setPosition(0.5);
-            }
-
-            else {
-                clawServo1.setPosition(1);
-                clawServo2.setPosition(0);
             }
 
 
